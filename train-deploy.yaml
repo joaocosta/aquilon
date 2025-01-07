@@ -162,6 +162,17 @@ prod:
         script:
           - zapp restart-app --verify-after 10 --status-interval-time 5 --verification-iterations 3 --plant ec/aquilon-ny-1/prod --pattern '^(aqd-ro-instance-\d|aqd-ro-knc-\d|aqd-ro-batch-instance-\d|aqd-ro-batch-knc-\d|aqd-ro-dhcp-instance-\d|aqd-ro-dhcp-knc-\d)$' --continue-on-fail
         on_failure: "continue"
+      - stage:
+        name: "Reconfiguring treadmill"
+        script:
+          - treadmill configure cdb.aqd-ro-dhcp-tm --manifest=treadmill/${TRAIN_DEPLOY_ENV}/manifest.yaml
+          - train-treadmill monitor sync --source-dir treadmill/monitors/${TRAIN_DEPLOY_ENV}/
+        on_failure: "continue"
+      - stage:
+        name: "Restarting treadmill instances"
+        script:
+          - train-treadmill monitor restart --application-ids cdb.aqd-ro-dhcp-tm --cells rr,hz
+        on_failure: "continue"
   - name: prod.verify
     notification-policy: "strict"
     notify-email: aqd-eng, auroraturn

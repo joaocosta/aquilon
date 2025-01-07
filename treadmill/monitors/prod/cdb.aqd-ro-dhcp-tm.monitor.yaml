@@ -1,0 +1,6 @@
+app_name: "cdb.aqd-ro-dhcp-tm"
+cells:
+  - cell: rr
+    count: 1
+  - cell: hz
+    count: 1
