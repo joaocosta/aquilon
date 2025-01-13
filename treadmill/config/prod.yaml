@@ -1,0 +1,7 @@
+cpu: 100%
+disk: 100G
+cfg_env: prod
+run_env: prod
+memory: 64G
+proid: cdb
+keytab: host/nybgpvip10-86-183-73.new-york.ms.com@is1.morgan
