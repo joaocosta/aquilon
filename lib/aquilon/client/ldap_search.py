@@ -46,6 +46,11 @@ def check_ldap_filter(uid, config):
         if result_data:
             return result_data
         return False
+    except ImportError as e:
+        '''If the LDAP module is not available, the return value will be set to True
+        which will route the requests to BATCH VIP since this behaviour is seen on
+        some AQ8 hosts when LD_LIBRARY_PATH is set for openssl'''
+        return True
     except Exception as e:
         '''If there are issues due to LDAP End Points not returning data, 
         the return value will be set to False which will route the requests 
