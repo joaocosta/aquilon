@@ -56,20 +56,24 @@ def read_file(option, opt, value, parser):
 
 
 def store_in_dict(option, opt_str, value, parser):
-    "Callback function to support a 'dict' option type"
+    """Callback function to support a 'dict' option type.
+    Called once for each 'dict'-type argument on a command line."""
     opt = opt_str.lstrip("-")
-
-    # Commas are a problem when we serialise the data later, just don't allow them.
-    if value.find(",") >= 0:
-        raise OptionValueError(f"The value for option '{opt_str}' may not contain a comma (',')")
 
     result = value.split("=", 1)
     key, val = result if len(result) == 2 else (result[0], "")
 
+    # Allow the user to provide a comma-separated list for a value
+    if val.find(",") >= 0:
+        val = re.split("\s*,\s*", val)
+
+    # Fetch any existing value for this option
     item = getattr(parser.values, opt)
+
     if item == None:
         item = {}
 
+    # Keys can have more than one value and where they do, construct a list
     if key in item:
         if isinstance(item[key], list):
             item[key].append(val)
@@ -77,6 +81,10 @@ def store_in_dict(option, opt_str, value, parser):
             item[key] = [item[key], val]
     else:
         item[key] = val
+
+    # Sort, deduplicate and remove empty strings from a value which is a list
+    if isinstance(item[key], list):
+        item[key] = sorted([v for v in set(item[key]) if v != ""])
     
     setattr(parser.values, opt, item)
 
