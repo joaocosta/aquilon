@@ -21,7 +21,7 @@ fi
 . $completion_file
 
 total_fail=0
-for obj in $( perl -ne '/_aq_complete_(.*) \(\)/ && print "$1\n"' $completion_file) ; do 
+for obj in $( grep -oP '_aq_complete_\K(.*)(?= \(\))' $completion_file) ; do
     echo -n "test $obj..."
     output=$(_aq_complete_$obj 2>&1)
     if [[ $? == 0 ]]; then
