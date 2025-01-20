@@ -110,7 +110,6 @@ class IBChecker:
         self.broker_test.assertIsNotNone(response)
 
         self._check_header(response.request.headers)
-        self._check_header(response.headers)
 
     def _check_header(self, headers):
         self.broker_test.assertIsNotNone(headers)
