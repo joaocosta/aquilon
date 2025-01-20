@@ -656,7 +656,7 @@ class IBServices:
         if not self._warn_if_not_authoritative(dns_domain):
             return
 
-        url = "/dns/srv"
+        url = "/dns/srv/"
         payload = {
             "service":  service,
             "protocol": protocol,
@@ -709,12 +709,13 @@ class IBServices:
             "port":     port,
             "priority": priority,
             "weight":   weight,
-            "cm_token": self.justification,
         }
+        if self.justification is not None:
+            options["cm_token"] = self.justification
         if target is not None:
             options["target"] = str(target)
         params = dict(filter(lambda item: item[1] is not None, options.items()))
-        url = self._generate_url_from_params("/dns/srv", params)
+        url = self._generate_url_from_params("/dns/srv/", params)
 
         return self._http_request("DELETE", url, ignore_statuses=[404])
 
@@ -760,10 +761,11 @@ class IBServices:
             payload["domain"] = str(payload["domain"])
         if payload.get("target", None):
             payload["target"] = str(payload["target"])
-        payload["cm_token"] = self.justification
+        if self.justification is not None:
+            payload["cm_token"] = self.justification
 
         params = dict(filter(lambda item: item[1] is not None, old.items()))
-        url = self._generate_url_from_params("/dns/srv", params)
+        url = self._generate_url_from_params("/dns/srv/", params)
 
         return self._http_request("PATCH", url, payload)
 
@@ -785,7 +787,7 @@ class IBServices:
             if optional_params[field] is not None:
                 params[field] = optional_params[field]
 
-        url = self._generate_url_from_params("/dns/srv", params)
+        url = self._generate_url_from_params("/dns/srv/", params)
 
         return self._http_request("GET", url, ignore_statuses=[404])
 
