@@ -563,7 +563,10 @@ class DSDBRunner(metaclass=DSDBEnabledMeta):
 
     def getenv(self):
         if self.dsdb_use_testdb:
-            return {"DSDB_USE_TESTDB": self.dsdb_use_testdb, "DSDB_BROKER_URL": self.dsdb_broker_url}
+            env = {"DSDB_USE_TESTDB": self.dsdb_use_testdb}
+            if self.dsdb_broker_url is not None:
+                env["DSDB_BROKER_URL"] = self.dsdb_broker_url
+            return env
 
         return None
 
