@@ -246,6 +246,9 @@ class AQDMaker(object):
                     knc_args.append(bind_address)
                 knc_args.append(config.get("broker", "kncport"))
                 mon.addProcess("knc", knc_args)
+                log.msg("Added knc to ProcessMonitor")
+            else:
+                log.msg("Not adding knc to ProcessMonitor")
             if config.getboolean("broker", "run_git_daemon"):
                 # The git daemon *must* be invoked using the form 'git-daemon'
                 # instead of invoking git with a 'daemon' argument.  The latter
@@ -262,6 +265,9 @@ class AQDMaker(object):
                     args.append("--listen=%s" % bind_address)
                 args.append(config.get("broker", "kingdir"))
                 mon.addProcess("git-daemon", args)
+                log.msg("Added git-daemon to ProcessMonitor")
+            else:
+                log.msg("Not adding git-daemon to ProcessMonitor")
             if config.getboolean("broker", "run_aqnotifyd"):
                 notifyd = os.path.join(os.path.dirname(sys.argv[0]),
                                        "aq_notifyd")
@@ -271,8 +277,13 @@ class AQDMaker(object):
                 # to properly support virtualenv.
                 args = [sys.executable, notifyd, "--config", config.baseconfig]
                 mon.addProcess("notifyd", args, env=os.environ)
+                log.msg("Added aq_notifyd to ProcessMonitor")
+            else:
+                log.msg("Not adding aq_notifyd to ProcessMonitor")
             mon.startService()
             reactor.addSystemEventTrigger('before', 'shutdown', mon.stopService)
+        else:
+            log.msg("Not adding knc, git-daemon nor aq_notifyd to ProcessMonitor")
 
         # This socket is created by twisted and only accessed by knc as
         # connections come in.
