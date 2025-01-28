@@ -274,7 +274,7 @@ class IBServicesRequestHandler(SimpleHTTPRequestHandler):
                 ib_dns.delete_cname(fqdn=name)
             else:
                 raise Exception(f"Don't know how to handle request {command} {path} {self.body}")
-        elif path == '/dns/srv':
+        elif path == '/dns/srv/':
             service = self.json_body.get("service")
             protocol = self.json_body.get("protocol")
             domain = self.json_body.get("domain")
@@ -697,7 +697,7 @@ def ib_expect_add_dns_srv_record(service, protocol, dns_domain, target, port, pr
     if justification is not None:
         payload["cm_token"] = justification
 
-    test_case = ib_test_case("POST", "/dns/srv", payload, response_code, response_body)
+    test_case = ib_test_case("POST", "/dns/srv/", payload, response_code, response_body)
     http_monitor.expect(test_case)
 
 
@@ -731,7 +731,7 @@ def ib_expect_update_dns_srv_record(old, new, response_code=204, response_body="
         payload["cm_token"] = justification
 
     params = dict(filter(lambda item: item[1] is not None, old.items()))
-    url = _generate_url_from_params("/dns/srv", params)
+    url = _generate_url_from_params("/dns/srv/", params)
 
     test_case = ib_test_case("PATCH", url, payload, response_code, response_body)
     http_monitor.expect(test_case)
@@ -760,7 +760,7 @@ def ib_expect_del_dns_srv_record(service, protocol, dns_domain, target, port=Non
     }
 
     params = dict(filter(lambda item: item[1] is not None, options.items()))
-    url = _generate_url_from_params("/dns/srv", params)
+    url = _generate_url_from_params("/dns/srv/", params)
 
     test_case = ib_test_case("DELETE", url, None, response_code, response_body)
     http_monitor.expect(test_case)
